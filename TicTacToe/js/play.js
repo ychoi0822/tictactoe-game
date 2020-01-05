@@ -3,30 +3,29 @@ let startButton = document.querySelector("#start");
 let squares = document.querySelectorAll(".square");
 let result = document.getElementById("result");
 let board = [0,0,0,0,0,0,0,0,0];
-let player = "";
 
 reset();
 
 function reset() {
     squares.forEach(square => square.innerHTML = "");
-    player = "O";
     board.fill(0);
     result.innerHTML = "";
 }
 
 function start() {
+    let player = "O";
     squares.forEach(function(square) {
         square.addEventListener("click", function() {
             let pos = square.getAttribute("name");
             square.innerHTML = player;
-            recordScore(pos);
-            checkWinner();
+            recordScore(pos, player);
+            checkWinner(player);
             player === "X" ? player = "O" : player = "X";
         });
     });
 }
 
-function recordScore(pos) {
+function recordScore(pos, player) {
     let indexPairs = {
         one: 0,
         two: 1,
@@ -42,7 +41,7 @@ function recordScore(pos) {
     board[i] = player;
 }
 
-function checkWinner() {
+function checkWinner(player) {
     let wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
     let win = 0;
 
@@ -52,8 +51,10 @@ function checkWinner() {
                 win++;
             }
         });
+
         if (win === 3) {
-            result.innerHTML = "Player " + player + " is the winner!";
+            result.innerHTML = "Player " + player + " wins!";
+            setTimeout(function() { reset(); start(); }, 1000);
         } else {
             win = 0;
         }
@@ -62,8 +63,10 @@ function checkWinner() {
 
 resetButton.addEventListener("click", function() {
     reset();
+    startButton.disabled = false;
 });
 
 startButton.addEventListener("click", function() {
     start();
+    startButton.disabled = true;
 });
